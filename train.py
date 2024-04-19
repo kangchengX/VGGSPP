@@ -1,4 +1,4 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
+# from __future__ import absolute_import, division, print_function, unicode_literals
 # 设置 tensorflow 禁止使用 GPU
 # 在import tensorflow之前
 import os
@@ -27,62 +27,6 @@ IMG_INPUT_HEIGHT = pre.IMG_PRE_OUT_HEIGHT
 #     tf.config.experimental.set_memory_growth(gpu, True)
 
 
-class DataLoader():
-    """加载数据集"""
-    def __init__(self, img_type, files_name_train, files_name_test):
-        ##用 fashion_mnist 数据集
-        #initial_data = tf.keras.datasets.fashion_mnist
-        #(self.train_images, self.train_labels), (self.test_images, self.test_labels) = initial_data.load_data()
-        # if self.img_type == pre.CHANGE_GRAY_SIN or self.img_type == pre.CHANGE_GRAY_MUL:
-        #     self.train_images = np.expand_dims(self.train_images.astype(np.float32)/255.0,axis=-1)
-        #     self.test_images = np.expand_dims(self.test_images.astype(np.float32)/255.0,axis=-1)
-        
-        #用自己搭建的数据集
-        self.img_type = img_type
-        (self.train_images, self.train_labels), (self.test_images, self.test_labels) = pre.img_pre(self.img_type,files_name_train,files_name_test)    
-        self.train_labels = self.train_labels.astype(np.int32)
-        self.test_labels = self.test_labels.astype(np.int32)
-        if self.img_type == pre.CHANGE_GRAY_SIN or self.img_type == pre.CHANGE_BGR_SIN:
-            self.num_train, self.num_test = self.train_images.shape[0], self.test_images.shape[0]
-        else:
-            self.num_train, self.num_test = len(self.train_images), len(self.test_images)
-
-    def get_batch_train(self, batch_size):
-        """获得训练集的图片和类别"""
-        #在每个epoch中随机获取batch
-        index_all = np.random.choice(self.num_train,self.num_train,replace= False)
-        num_iter = self.num_train//batch_size
-        train_images_all = []
-        train_labels_all = []
-        for iter in range(0,num_iter):
-            index = index_all[iter*batch_size:(iter+1)*batch_size]
-            if self.img_type == pre.CHANGE_GRAY_SIN or self.img_type == pre.CHANGE_BGR_SIN:
-                train_images_all.append(self.train_images[index])
-                train_labels_all.append(self.train_labels[index])
-            else:
-                train_images_list = []
-                for ind in index:
-                    train_images_list.append(self.train_images[ind])
-                train_images_all.append(train_images_list)
-                train_labels_all.append(self.train_labels[index])
-        return train_images_all,train_labels_all,num_iter
-
-        ##再次调整大小
-        #resized_images = tf.image.resize_with_pad(self.train_images[index],IMG_INPUT_WIDTH,IMG_INPUT_HIGHT,)
-        #return resized_images.numpy(), self.train_labels[index]
-        
-
-    def get_batch_test(self):
-        """获得测试集的图片和类别"""
-        if self.img_type == pre.CHANGE_GRAY_SIN or self.img_type == pre.CHANGE_BGR_SIN:
-            return self.test_images, self.test_labels
-        else:
-            test_images_list = []
-            for ind in range(0,self.num_test):
-                test_images_list.append(self.test_images[ind])
-            return test_images_list, self.test_labels
-
-
 def show_loss_plot(loss_results, accuracy_results, img_type):
     """代价(损失)与准确率的可视化"""
     fig, axes = plt.subplots(2, sharex=True, figsize=(12, 8))
@@ -94,8 +38,6 @@ def show_loss_plot(loss_results, accuracy_results, img_type):
     axes[1].plot(accuracy_results)
     plt.savefig(str(img_type) + '-' + 'show_loss.jpg')
     plt.show()
-
-
 
 
 def train_vggspp(batch_size, epoch, img_type, dataLoader):
