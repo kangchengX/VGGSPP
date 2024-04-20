@@ -1,58 +1,83 @@
-# python
-# -*-coding:utf-8 -*-
-
-"""
-# File       : xiaobo.py
-# Time       ：2022/4/16 14:44
-# Author     ：周文鑫
-# Software   ：PyCharm
-"""
-import pywt
+import cv2
 import numpy as np
-from cv2 import cv2
-from PIL import Image
 import os
+import pywt
 
-def w(img,path):
-# ==============固定阈值、预设小波=====================
-        w = 'sym4'  # 定义小波基的类型
-        l = 1# 变换层次
-        coeffs = pywt.wavedec2(data=img, wavelet=w, level=l)  # 对图像进行小波分解
-        threshold = 0.04
+def wavelet_denoise(img, threshold=0.04, wavelet='sym4', level=1):
+    """Apply wavelet denoising on an image.
 
-        list_coeffs = []
-        for i in range(1, len(coeffs)):
-            list_coeffs_ = list(coeffs[i])
-            list_coeffs.append(list_coeffs_)
+    Args:
+        img (np.array): Input image array.
+        threshold (float): Threshold for filtering noise in wavelet coefficients.
+        wavelet (str): Type of wavelet to use.
+        level (int): Number of decomposition levels.
 
-        for r1 in range(len(list_coeffs)):
-            for r2 in range(len(list_coeffs[r1])):
-                # 对噪声滤波(软阈值)
-                list_coeffs[r1][r2] = pywt.threshold(list_coeffs[r1][r2], threshold * np.max(list_coeffs[r1][r2]))
+    Returns:
+        denoised_img (np.array): Denoised image.
+    """
+    # Decompose the image using discrete wavelet transform
+    coeffs = pywt.wavedec2(data=img, wavelet=wavelet, level=level)
 
-        rec_coeffs = []  # 重构系数
-        rec_coeffs.append(coeffs[0])  # 将原图像的低尺度系数保留进来
+    # List to hold modified coefficients
+    coeffs_modified = coeffs[:]
+    for i in range(1, len(coeffs)):
+        coeffs_modified[i] = list(coeffs[i])
+        # Apply thresholding to each set of coefficients except the approximation coefficients
+        for j in range(len(coeffs_modified[i])):
+            coeffs_modified[i][j] = pywt.threshold(coeffs_modified[i][j], 
+                                                   threshold * np.max(coeffs_modified[i][j]), 
+                                                   mode='soft')
 
-        for j in range(len(list_coeffs)):
-            rec_coeffs_ = tuple(list_coeffs[j])
-            rec_coeffs.append(rec_coeffs_)
+    # Reconstruct the image from the modified coefficients
+    denoised_img = pywt.waverec2(coeffs_modified, wavelet)
+    denoised_img = np.clip(denoised_img, 0, 255)  # Ensure pixel values are valid
+    denoised_img = np.uint8(denoised_img)  # Convert to unsigned byte format
 
-        denoised_img = pywt.waverec2(rec_coeffs, 'sym4')
-        denoised_img = Image.fromarray(np.uint8(denoised_img))
-        denoised_img.save(path)
+    return denoised_img
+
+def process_images(input_dir, output_dir):
+    """Process all images in the input directory and save the denoised images in the output directory.
+
+    Args:
+        input_dir (str): Directory containing the original images.
+        output_dir (str): Directory where denoised images will be saved.
+    """
+    # Ensure output directory exists
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+
+    # List all image files in the input directory
+    img_names = os.listdir(input_dir)
+    for index, img_name in enumerate(img_names, 1):
+        input_path = os.path.join(input_dir, img_name)
+        output_path = os.path.join(output_dir, f'cq{index}.tif')
+
+        # Read image
+        img = cv2.imread(input_path)
+        if img is None:
+            print(f"Failed to load image {input_path}")
+            continue
+
+        # Convert to grayscale (if needed)
+        if img.ndim == 3:
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+        # Denoise the image
+        denoised_img = wavelet_denoise(img)
+
+        # Save the denoised image
+        cv2.imwrite(output_path, denoised_img)
+        print(f"Denoised image saved to {output_path}")
+
 
 if __name__ == '__main__':
-    # 读取文件夹、得到路径、数量
-    img_place = './figNew/CQ/'
-    img_nplace = './fig/CQ/'
-    img_names = os.listdir(img_place)
-    index = 1
-    for each_img in img_names:
-        each_path = img_place + each_img
-        img = cv2.imread(each_path)
-        each_npath = img_nplace + 'cq{}.tif'.format(index)
-        w(img,each_npath)
-        index = index+1
+    old_folder = 'data_older'
+    new_folder = 'data'
+    for child_folder in os.listdir(old_folder):
+        input_folder = os.path.join(old_folder,child_folder)
+        output_folder = os.path.join(new_folder,child_folder)
+        os.makedirs(output_folder, exist_ok=True)
+        process_images(input_folder, output_folder)
 
 
 
