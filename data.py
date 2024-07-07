@@ -19,10 +19,8 @@ class DataLoader():
             ndarray for images with the same shape
         images_test : the loaded images in test set. Initial is []. After loaded, list for images with different shapes,
             ndarray for images with the same shape
-        labels_train : the loaded labels in training set. Initial is []. After loaded, list for images with different shapes,
-            ndarray for images with the same shape
-        labels_test : the loaded labels in test set. Initial is []. After loaded, list for images with different shapes,
-            ndarray for images with the same shape 
+        labels_train : the loaded labels in training set. Initial is []. After loaded, converted to an array with shape (size_train,)
+        labels_test : the loaded labels in test set. Initial is []. After loaded, converted to an array with shape (size_test,)
     '''
     def __init__(self, 
                  images_type : Literal['gray_sin', 'gray_mul','bgr_sin','bgr_mul'], 
@@ -68,17 +66,16 @@ class DataLoader():
         Returns:
             img : the normalized image. None if failed to read the image
         '''
-        width, height = self.image_size
         
         # convert images to the same size
         if self.images_type == 'gray_sin' or self.images_type == 'bgr_sin':
-            img = cv2.resize(img,(width,height))
+            img = cv2.resize(img, self.image_size)
 
         img = img.astype(np.float32)/255.0
 
         # expand dim for gray images
         if self.images_type == 'gray_sin' or self.images_type == 'gray_mul':
-            img = np.expand_dims(img,axis=-1)
+            img = np.expand_dims(img, axis=-1)
 
         return img
     
@@ -178,12 +175,14 @@ class DataLoader():
         if shuffle:
             self._shuffle()
 
-        # convert the data set to ndarray if the images have same shape
+        # convert the images to ndarray if the images have same shape
         if self.images_type == 'gray_sin' or self.images_type == 'bgr_sin':
             self.images_train = np.array(self.images_train,dtype=np.float32)
-            self.labels_train = np.array(self.labels_train)
             self.images_test = np.array(self.images_test,dtype=np.float32)
-            self.labels_test = np.array(self.labels_test)
+
+        # convert the labels to ndarray
+        self.labels_train = np.array(self.labels_train)
+        self.labels_test = np.array(self.labels_test)
 
         if len(self.filenames_fail) !=0 :
             raise warnings.warn(f'{len(self.filenames_fail)} files were not successfully loaded', RuntimeWarning)
@@ -196,7 +195,7 @@ class DataLoader():
                 If images_type is 'gray_sin' or 'bgr_sin', images_train are an array with shape (batch, height, width, channels),
                     labels_train are an array with shape (batch). 
                 If images_type is 'gray_mul' or 'bgr_nul', images_train are a list of length of batch containing elements with shape (height, width, channels),
-                    lables_train are a list of length of batch
+                    lables_train are an array with shape (batch)
         """
         num_iter = self.size_train//batch_size
         images_train_all = []

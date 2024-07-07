@@ -84,7 +84,7 @@ def train(batch_size : int,
                                    images_type=data_loader.images_type, 
                                    images=images, 
                                    training=True)
-                loss = loss_object(labels=labels, preds=preds) 
+                loss = loss_object(labels, preds) 
 
             # updata parameters
             gradients = tape.gradient(loss, model.trainable_variables)
