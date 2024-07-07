@@ -1,9 +1,24 @@
 import tensorflow as tf
 import numpy as np
+from typing import Literal
+from constants import CONV_CONFIG
 
 class SPP(tf.keras.layers.Layer):
-    def __init__(self, pool_type='max_pool', levels = [1,2,4]):
+    '''The SPP layer. See https://arxiv.org/abs/1406.4729'''
+    def __init__(self, 
+                 pool_type : Literal['max_pool', 'avg_pool'] | None = 'max_pool', 
+                 levels : list | None = [1,2,4]):
+        '''Initialize the model
+        
+        Args:
+            pool_type : the pooling type, 'max_pool' or avg_pool'
+            levels : the SPP levels
+        '''
         super().__init__()
+
+        if pool_type not in ('max_pool', 'avg_pool'):
+            raise ValueError(f'unknown pool_type {pool_type}')
+        
         self.pool_type = pool_type
         self.levels = levels
  
@@ -12,9 +27,9 @@ class SPP(tf.keras.layers.Layer):
         shape = inputs.shape
         _, h, w, _ = shape[0], shape[1], shape[2], shape[3]
 
-        # SPP pooling process
+        # SPP pooling
         for level in self.levels:
-
+            # calculate the size of pooling kernel dynamicly to ensure same output shape
             h_pad = np.ceil(h/level).astype(np.int32)*level - h
             w_pad = np.ceil(w/level).astype(np.int32)*level - w
             paddings = tf.constant([[0,0],[0,h_pad],[0,w_pad],[0,0]])
@@ -24,12 +39,12 @@ class SPP(tf.keras.layers.Layer):
             stride_size = kernel_size
 
             if self.pool_type == 'max_pool':
-                pool = tf.nn.max_pool(inputs_pad, ksize=kernel_size, strides=stride_size, padding='SAME')
-                pool = tf.compat.v1.layers.flatten(pool)           
- 
+                pool = tf.nn.max_pool(inputs_pad, ksize=kernel_size, strides=stride_size, padding='SAME')        
             else:
                 pool = tf.nn.avg_pool(inputs_pad, ksize=kernel_size, strides=stride_size, padding='SAME')
-                pool = tf.compat.v1.layers.flatten(pool)
+            
+            # flatten the features
+            pool = tf.compat.v1.layers.flatten(pool)
 
             # concatenate levels together
             if level == 1:
@@ -41,7 +56,18 @@ class SPP(tf.keras.layers.Layer):
 
 
 class ConvBlock(tf.keras.layers.Layer):
-    def __init__(self, num_convs, num_channels, max_pool=True):
+    '''The convolutional block, containing all the convolutional layers and pooling layers'''
+    def __init__(self, 
+                 num_convs : int, 
+                 num_channels : int, 
+                 max_pool : bool | None = True):
+        '''Initialize the model
+        
+        Args:
+            num_convs : number of convolutional layers with kernel_size = 3, padding = 'same' and actication = 'relu'
+            num_channel : number of output channels
+            max_pool : True indicated adding a max pooling layer in the end with pooling_size = 2 and strides = 2
+        '''
         super().__init__()
         self.num_convs = num_convs
         self.num_channels = num_channels
@@ -62,15 +88,29 @@ class ConvBlock(tf.keras.layers.Layer):
 
 
 class VGGSPP(tf.keras.Model):
-    def __init__(self, conv_arch, levels, num_classes):
+    '''The implementation of VGGSPP model'''
+    def __init__(self, 
+                 conv_arch : Literal['vgg11','vgg16','vgg19'], 
+                 levels : list, 
+                 num_classes : int):
+        '''Initialize the model
+        
+        Args:
+            conv_arch : the configuration for the VGG network, ['vgg11','vgg16','vgg19'].
+            levels : the SPP levels
+            num_classes : number of the classes
+        '''
         super().__init__()
+        # convolutional layers plus traditional pooling
         if type(conv_arch) is str:
             conv_arch = CONV_CONFIG[conv_arch]
         self.conv_blocks = tf.keras.Sequential(
             [ConvBlock(num_convs, num_channels, max_pool=max_pool) 
              for num_convs, num_channels, max_pool in conv_arch]
         )
-        self.spp_layer = SPP(levels) 
+        # SPP layer
+        self.spp_layer = SPP(levels)
+        # MLP block
         self.classifier = tf.keras.Sequential([
             tf.keras.layers.Dense(4096, activation='relu'),
             tf.keras.layers.Dropout(0.5),
@@ -85,9 +125,3 @@ class VGGSPP(tf.keras.Model):
         outputs = self.spp_layer(outputs)
         outputs = self.classifier(outputs)
         return outputs
-    
-CONV_CONFIG = {
-    'vgg11': ((1, 64, True), (1, 128, True), (2, 256, True), (2, 512, True), (2, 512, False)),
-    'vgg16': ((2, 64, True), (2, 128, True), (3, 256, True), (3, 512, True), (3, 512, False)),
-    'vgg19': ((2, 64, True), (2, 128, True), (3, 256, True), (3, 512, True), (3, 512, False))
-}
