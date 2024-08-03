@@ -71,15 +71,10 @@ def process_images(input_dir, output_dir):
 
 
 if __name__ == '__main__':
-    old_folder = 'data_older'
+    old_folder = 'data_old'
     new_folder = 'data'
     for child_folder in os.listdir(old_folder):
         input_folder = os.path.join(old_folder,child_folder)
         output_folder = os.path.join(new_folder,child_folder)
         os.makedirs(output_folder, exist_ok=True)
         process_images(input_folder, output_folder)
-
-
-
-
-

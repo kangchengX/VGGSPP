@@ -2,3 +2,8 @@ __pycache__/
 data/
 *.h5
 *.ipynb
+bgr_mul/
+bgr_sin/
+gray_mul/
+gray_sin/
+experiments.py

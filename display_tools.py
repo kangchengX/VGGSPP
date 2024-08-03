@@ -1,26 +1,30 @@
 import matplotlib.pyplot as plt
+import os
 from typing import List
 
-def show_loss_plot(loss_results : List[float], 
-                   accuracy_results : List[float], 
-                   images_type : str,
-                   save_plot : bool | None = True,
-                   show_plot : bool | None = True):
-    """visulize loss and accuracy
+def show_loss_plot(
+        loss_results: List[float], 
+        accuracy_results: List[float], 
+        images_shapes_type: str,
+        save_filename: str | None = None,
+        show_plot: bool | None = True
+):
+    """
+    Visulize loss and accuracy.
     
     Args:
-        loss_results (list[float]): list of loss values
-        accuracy_results (list[float]): list of accuracy values
-        images_type : the type of the shape of input images, can be:
-            'gray_sin' : gray channel and images have the same (height, width)
-            'gray_mul' : gray channel and images have different (height, width)
-            'bgr_sin' : BGR channels and images have the same (height, width)
-            'bgr_mul' : BGR channels and images have different (height, width)
-        save_plot : True indicates saving the polt with filename images_type + '-' + 'show_loss.jpg'
-        show_plot : True indicates showing the figure
+        loss_results (list): list of loss values.
+        accuracy_results (list): list of accuracy values.
+        images_shapes_type (str): the type of the shape of input images, can be: \
+            `'gray_sin'`: gray channel and images have the same (height, width); \
+            `'gray_mul'`: gray channel and images have different (height, width); \
+            `'bgr_sin'`: BGR channels and images have the same (height, width); \
+            `'bgr_mul'`: BGR channels and images have different (height, width).
+        save_plot (bool): True indicates saving the polt with filename `images_shapes_type + '-' + 'show_loss.jpg'`.
+        show_plot (bool): True indicates showing the figure.
 
     Return:
-        fig : Figure of this figure
+        fig (Figure): Figure of this figure.
     """
     fig, axes = plt.subplots(2, sharex=True, figsize=(12, 8))
     fig.suptitle('Training Metrics')
@@ -30,8 +34,8 @@ def show_loss_plot(loss_results : List[float],
     axes[1].set_xlabel("Epoch", fontsize=14)
     axes[1].plot(accuracy_results)
     
-    if save_plot:
-        plt.savefig(images_type + '-' + 'show_loss.jpg')
+    if save_filename is not None:
+        plt.savefig(os.path.splitext(save_filename)[0] + '.png')
 
     if show_plot:
         plt.show()
