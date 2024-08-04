@@ -36,7 +36,8 @@ def wavelet_denoise(img, threshold=0.04, wavelet='sym4', level=1):
     return denoised_img
 
 def process_images(input_dir, output_dir):
-    """Process all images in the input directory and save the denoised images in the output directory.
+    """
+    Process all images in the input directory and save the denoised images in the output directory.
 
     Args:
         input_dir (str): Directory containing the original images.

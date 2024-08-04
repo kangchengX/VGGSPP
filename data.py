@@ -50,7 +50,7 @@ class DataLoader():
                 `'gray_mul'`: gray channel and images have different (height, width); \
                 `'bgr_sin'`: BGR channels and images have the same (height, width); \
                 `'bgr_mul'`: BGR channels and images have different (height, width).
-            image_size (tuple | int): tuple of (height, width) for input images with the same shape, \
+            image_size (tuple | int): tuple of (height, width) for input images with the same shape, or int for both height and width \
                 `None` for input images with different shapes. Default to `None`.
             ratio (float): the ratio for training set in the whole data set. Default to `0.75`.
         """
