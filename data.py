@@ -16,9 +16,9 @@ class DataLoader():
         classes (dict): keys are the class names, values are the coresponding numerical label values.
         size_train (int): number of the images in the loaded training set.
         size_test (int): number of the images in the loaded test set.
-        images_train (list | ndarray): the loaded images in training set. Initial is `[]`. After loaded, list for images with different shapes, \
+        images_train (list | ndarray): the loaded images in training set. Initial is `[]`. After loaded, list for images with different shapes,
             ndarray for images with the same shape.
-        images_test (list | ndarray): the loaded images in test set. Initial is `[]`. After loaded, list for images with different shapes, \
+        images_test (list | ndarray): the loaded images in test set. Initial is `[]`. After loaded, list for images with different shapes,
             ndarray for images with the same shape.
         labels_train (list | ndarray): the loaded labels in training set. Initial is `[]`. After loaded, converted to an array with shape (`size_train`,).
         labels_test (list | ndarray): the loaded labels in test set. Initial is `[]`. After loaded, converted to an array with shape (`size_test`,).
@@ -36,21 +36,21 @@ class DataLoader():
     labels_test: list | np.ndarray
 
     def __init__(
-            self, 
-            images_shapes_type: Literal['gray_sin', 'gray_mul','bgr_sin','bgr_mul'], 
-            image_size: tuple | int | None = None, 
-            ratio: float | None = 0.75
+        self, 
+        images_shapes_type: Literal['gray_sin', 'gray_mul','bgr_sin','bgr_mul'], 
+        image_size: tuple | int | None = None, 
+        ratio: float | None = 0.75
     ):
         """
         Initialize the model.
         
         Args:
-            images_shapes_type (str): the type of the shape of input images, can be: \
-                `'gray_sin'`: gray channel and images have the same (height, width); \
-                `'gray_mul'`: gray channel and images have different (height, width); \
-                `'bgr_sin'`: BGR channels and images have the same (height, width); \
+            images_shapes_type (str): the type of the shape of input images, can be:
+                `'gray_sin'`: gray channel and images have the same (height, width);
+                `'gray_mul'`: gray channel and images have different (height, width);
+                `'bgr_sin'`: BGR channels and images have the same (height, width);
                 `'bgr_mul'`: BGR channels and images have different (height, width).
-            image_size (tuple | int): tuple of (height, width) for input images with the same shape, or int for both height and width \
+            image_size (tuple | int): tuple of (height, width) for input images with the same shape, or int for both height and width
                 `None` for input images with different shapes. Default to `None`.
             ratio (float): the ratio for training set in the whole data set. Default to `0.75`.
         """
@@ -107,7 +107,7 @@ class DataLoader():
         Args:
             label (int): label of the image.
             filename (str): path of the image.
-            train (bool): `True` indicates loading the image and label to the training set. \
+            train (bool): `True` indicates loading the image and label to the training set.
                 `False` indicates loading the image and the label to the test set.
         """
 
@@ -153,7 +153,7 @@ class DataLoader():
         Load dataset from the folder and devide the data set to training set and test set.
         
         Args:
-            folder (str): the folder containing the data set. The folder only has subfolders. \
+            folder (str): the folder containing the data set. The folder only has subfolders.
                 Each subfolder has the folder name as the class name and contains the images of this class.
             shuffle (bool): True indicates shuffle the training and test sets separately. Default to `True`
         """
@@ -217,10 +217,10 @@ class DataLoader():
         Get images for each batch for training.
         
         Returns:
-            zip(images_train_all, labels_train_all): list of tuples (images_train, labels_train). \
-                If `images_shapes_type` is `'gray_sin'` or `'bgr_sin'`, images_train are an array with shape (batch, height, width, channels), \
-                    labels_train are an array with shape (batch). \
-                If `images_shapes_type` is `'gray_mul'` or 'bgr_nul', images_train are a list of length of batch containing elements with shape (height, width, channels), \
+            zip(images_train_all, labels_train_all): list of tuples (images_train, labels_train).
+                If `images_shapes_type` is `'gray_sin'` or `'bgr_sin'`, images_train are an array with shape (batch, height, width, channels),
+                    labels_train are an array with shape (batch).
+                If `images_shapes_type` is `'gray_mul'` or 'bgr_nul', images_train are a list of length of batch containing elements with shape (height, width, channels),
                     lables_train are an array with shape (batch). 
         """
         num_iter = self.size_train//batch_size

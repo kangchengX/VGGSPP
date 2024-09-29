@@ -3,7 +3,7 @@ from typing import Literal
 
 def get_config(config_name: Literal['vgg11', 'vgg16', 'vgg19']):
     """
-    Get (VGG) config
+    Get (VGG) config.
     
     Args:
         config_name (str): the configuration for the VGG network, can be `'vgg11'`, `'vgg16'`, or `'vgg19'`.

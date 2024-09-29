@@ -17,13 +17,13 @@
 <details>
   <summary>Table of Contents</summary><br>
 
-- [Overview](#-overview)
-- [Repository Structure](#-repository-structure)
-- [Modules](#-modules)
-- [Getting Started](#-getting-started)
-  - [Installation](#-installation)
-  - [Data](#-data)
-  - [Usage](#-usage)
+- [Overview](#overview)
+- [Repository Structure](#repository-structure)
+- [Modules](#modules)
+- [Getting Started](#getting-started)
+  - [Installation](#installation)
+  - [Data](#data)
+  - [Usage](#usage)
 </details>
 <hr>
 

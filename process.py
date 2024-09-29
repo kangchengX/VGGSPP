@@ -10,13 +10,13 @@ from display_tools import show_loss_plot
 class Processor:
     """The class to train and test the model."""
     def __init__(
-            self,
-            model: VGGSPP,
-            data_loader: DataLoader,
-            learning_rate: float | None,
-            batch_size: float | None,
-            num_epochs: float | None,
-            folder: str | None = None
+        self,
+        model: VGGSPP,
+        data_loader: DataLoader,
+        learning_rate: float | None,
+        batch_size: float | None,
+        num_epochs: float | None,
+        folder: str | None = None
     ):
         """
         Initialize the model.
@@ -71,19 +71,19 @@ class Processor:
         return preds
     
     def _training(
-            self,
-            save_model_epochs: int | None = None, 
-            save_model: bool | None = True,
-            show_plot: bool | None = False,
-            save_filename: str | None=None
+        self,
+        save_model_epochs: int | None = None, 
+        save_model: bool | None = True,
+        show_plot: bool | None = False,
+        save_filename: str | None=None
     ):
         """
         Model training.
         
         Args:
-            save_model_epochs (int | None): If not `None`, the model will be saved every `save_model_epochs` of epochs \
+            save_model_epochs (int | None): If not `None`, the model will be saved every `save_model_epochs` of epochs
                 in the `self.folder` folder with name "model - {epoch}.h5". Default to `None`.
-            save_model (bool): If `True`, the model after all the epochs will be saved \
+            save_model (bool): If `True`, the model after all the epochs will be saved
                 in the `self.folder` folder with name "model - {epoch}.h5". Default to `True`.
             show_plot (bool): If `True`, the losses plot will be shown.
             save_filename (str): Path to save the plot if not `None`. Default to `None`. 
@@ -160,19 +160,19 @@ class Processor:
             json.dump(log, f, indent=4)
     
     def train(
-            self,
-            save_model_epochs: int | None = None, 
-            save_model: bool | None = True,
-            show_plot: bool | None = False,
-            save_filename: str | None=None
+        self,
+        save_model_epochs: int | None = None, 
+        save_model: bool | None = True,
+        show_plot: bool | None = False,
+        save_filename: str | None=None
     ):
         """
         Train the model and save the training log.
 
         Args:
-            save_model_epochs (int | None): If not `None`, the model will be saved every `save_model_epochs` of epochs \
+            save_model_epochs (int | None): If not `None`, the model will be saved every `save_model_epochs` of epochs
                 in the `self.folder` folder with name "model - {epoch}.h5". Default to `None`.
-            save_model (bool): If `True`, the model after all the epochs will be saved \
+            save_model (bool): If `True`, the model after all the epochs will be saved
                 in the `self.folder` folder with name "model - {epoch}.h5". Default to `True`.
             show_plot (bool): If `True`, the losses plot will be shown.
             save_filename (str): Path to save the plot if not `None`. Default to `None`. 
@@ -191,19 +191,19 @@ class Processor:
         self._save_log()
 
     def train_and_test(
-            self,
-            save_model_epochs: int | None = None, 
-            save_model: bool | None = True,
-            show_plot: bool | None = False,
-            save_filename: str | None=None
+        self,
+        save_model_epochs: int | None = None, 
+        save_model: bool | None = True,
+        show_plot: bool | None = False,
+        save_filename: str | None = None
     ):
         """
         Train the model and evaluate the model after all the epochs on the test set
         
         Args:
-            save_model_epochs (int | None): If not `None`, the model will be saved every `save_model_epochs` of epochs \
+            save_model_epochs (int | None): If not `None`, the model will be saved every `save_model_epochs` of epochs
                 in the `self.folder` folder with name "model - {epoch}.h5". Default to `None`.
-            save_model (bool): If `True`, the model after all the epochs will be saved \
+            save_model (bool): If `True`, the model after all the epochs will be saved
                 in the `self.folder` folder with name "model - {epoch}.h5". Default to `True`.
             show_plot (bool): If `True`, the losses plot will be shown.
             save_filename (str): Path to save the plot if not `None`. Default to `None`. 

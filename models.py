@@ -10,9 +10,9 @@ from config import get_config
 class SPP(Layer):
     """The SPP layer. See https://arxiv.org/abs/1406.4729"""
     def __init__(
-            self, 
-            pool_type: Literal['max_pool', 'avg_pool'] | None = 'max_pool', 
-            levels: tuple | None = (1,2,4)
+        self, 
+        pool_type: Literal['max_pool', 'avg_pool'] | None = 'max_pool', 
+        levels: tuple | None = (1,2,4)
     ):
         """
         Initialize the model.
@@ -67,10 +67,10 @@ class SPP(Layer):
 class ConvBlock(Layer):
     """The convolutional block, containing all the convolutional layers and pooling layers"""
     def __init__(
-            self, 
-            num_convs : int, 
-            num_channels : int, 
-            max_pool : bool | None = True
+        self, 
+        num_convs : int, 
+        num_channels : int, 
+        max_pool : bool | None = True
     ):
         """
         Initialize the model.
@@ -107,10 +107,10 @@ class ConvBlock(Layer):
 class VGGSPP(Model):
     """The implementation of VGGSPP model."""
     def __init__(
-            self, 
-            conv_arch: Literal['vgg11','vgg16','vgg19'], 
-            levels: list, 
-            num_classes: int
+        self, 
+        conv_arch: Literal['vgg11','vgg16','vgg19'], 
+        levels: list, 
+        num_classes: int
     ):
         """
         Initialize the model.

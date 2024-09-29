@@ -3,10 +3,10 @@ import os
 from typing import List
 
 def show_loss_plot(
-        loss_results: List[float], 
-        accuracy_results: List[float], 
-        save_filename: str | None = None,
-        show_plot: bool | None = True
+    loss_results: List[float], 
+    accuracy_results: List[float], 
+    save_filename: str | None = None,
+    show_plot: bool | None = True
 ):
     """
     Visulize loss and accuracy.
